@@ -1,0 +1,33 @@
+/*
+ * Board overlay: PPK2 marker GPIOs for the nRF54L15 DK.
+ *
+ * Three outputs are exposed under /zephyr,user:
+ *   prep-gpios    — high during preprocessing
+ *   infer-gpios   — high during inference
+ *   window-gpios  — toggles once per measurement window (optional)
+ *
+ * Pins: P1.11 / P1.12 / P1.13 on the nRF54L15 DK. P1.11 and P1.12 are not
+ * used by any node in the NCS 3.0.2 board files. P1.13 IS push button 0
+ * (sw0, button0 in nrf54l15dk_common.dtsi, pull-up, active low): the gpio-keys
+ * driver is not enabled in prj.conf (no CONFIG_INPUT), so nothing else drives
+ * it, but pressing button 0 shorts the window marker to GND -- do not press
+ * it during a PPK2 capture, or move window-gpios to a free pin. Verify
+ * against YOUR board pinout and adjust the pin numbers before flashing; if
+ * the port/pin belongs to another node in the base DTS, you will also need
+ * to disable that node.
+ *
+ * To use a pin on gpio0 or gpio2 instead of gpio1, change the phandle
+ * (&gpio0 / &gpio1 / &gpio2) and pin number accordingly.
+ *
+ * If you rename this file with a board-specific suffix (e.g.
+ * nrf54l15dk_nrf54l15_cpuapp.overlay), Zephyr applies it automatically
+ * for that board only — useful once you port to other targets.
+ */
+
+/ {
+	zephyr,user {
+		prep-gpios   = <&gpio1 11  GPIO_ACTIVE_HIGH>;
+		infer-gpios  = <&gpio1 12  GPIO_ACTIVE_HIGH>;
+		window-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+	};
+};
